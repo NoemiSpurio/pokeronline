@@ -58,7 +58,7 @@ public class Utente {
 	private Set<Ruolo> ruoli = new HashSet<>(0);
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "utente_id")
+	@JoinColumn(name = "tavolo_id")
 	private Tavolo tavoloJoined;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utenteCreazione")
