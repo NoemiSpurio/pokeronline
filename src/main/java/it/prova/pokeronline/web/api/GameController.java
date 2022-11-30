@@ -54,4 +54,18 @@ public class GameController {
 		
 		return TavoloDTO.buildTavoloDTOFromModel(result, false);
 	}
+	
+	@GetMapping("/abbandonaPartita")
+	@ResponseStatus(HttpStatus.OK)
+	public void abbandonaTavoloJoinato() {
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Utente utenteLoggato = utenteService.findByUsername(username);
+		
+		if (utenteLoggato == null) {
+			throw new UtenteNotFoundException("Utente non trovato");
+		}
+		
+		utenteService.abbandonaPartita(utenteLoggato);
+	}
 }

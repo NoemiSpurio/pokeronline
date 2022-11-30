@@ -32,4 +32,6 @@ public interface UtenteService {
 	public void compraCredito(Integer creditoAggiunto, Utente utenteLoggato);
 	
 	public Tavolo dammiUltimoGame(Utente utenteLoggato);
+	
+	public void abbandonaPartita(Utente utenteLoggato);
 }

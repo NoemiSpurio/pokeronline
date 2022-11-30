@@ -103,19 +103,32 @@ public class UtenteServiceImpl implements UtenteService {
 
 		if (utenteLoggato == null)
 			throw new UtenteNotFoundException("Elemento non trovato.");
-		
+
 		Integer nuovoCredito = utenteLoggato.getCreditoAccumulato() + creditoAggiunto;
 		utenteLoggato.setCreditoAccumulato(nuovoCredito);
 	}
 
 	@Override
 	public Tavolo dammiUltimoGame(Utente utenteLoggato) {
-		
+
 		if (utenteLoggato.getTavoloJoined() == null) {
 			throw new TavoloNotFoundException("Non stai giocando in nessun tavolo");
 		}
-		
+
 		return utenteLoggato.getTavoloJoined();
+	}
+
+	@Override
+	@Transactional
+	public void abbandonaPartita(Utente utenteLoggato) {
+
+		if (utenteLoggato.getTavoloJoined() == null) {
+			throw new TavoloNotFoundException(
+					"Non puoi abbandonare una partita perche' non stai giocando in nessun tavolo");
+		}
+
+		utenteLoggato.setTavoloJoined(null);
+		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
 	}
 
 }
