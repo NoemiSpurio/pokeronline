@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.prova.pokeronline.dto.TavoloDTO;
+import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.service.utente.UtenteService;
 import it.prova.pokeronline.web.api.exception.CreditoNonValidoException;
@@ -36,5 +38,20 @@ public class GameController {
 		}
 		
 		utenteService.compraCredito(creditoAggiunto, utenteLoggato);
+	}
+	
+	@GetMapping("/lastGame")
+	public TavoloDTO dammiIlLastGame() {
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Utente utenteLoggato = utenteService.findByUsername(username);
+		
+		if (utenteLoggato == null) {
+			throw new UtenteNotFoundException("Utente non trovato");
+		}
+		
+		Tavolo result = utenteService.dammiUltimoGame(utenteLoggato);
+		
+		return TavoloDTO.buildTavoloDTOFromModel(result, false);
 	}
 }
