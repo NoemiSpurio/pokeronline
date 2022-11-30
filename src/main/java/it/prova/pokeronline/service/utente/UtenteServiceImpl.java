@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.prova.pokeronline.model.StatoUtente;
 import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
+import it.prova.pokeronline.web.api.exception.UtenteNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,7 +81,7 @@ public class UtenteServiceImpl implements UtenteService {
 	public void changeUserAbilitation(Long utenteInstanceId) {
 		Utente utenteInstance = caricaSingoloUtente(utenteInstanceId);
 		if (utenteInstance == null)
-			throw new RuntimeException("Elemento non trovato.");
+			throw new UtenteNotFoundException("Elemento non trovato.");
 
 		if (utenteInstance.getStato() == null || utenteInstance.getStato().equals(StatoUtente.CREATO))
 			utenteInstance.setStato(StatoUtente.ATTIVO);
@@ -92,6 +93,17 @@ public class UtenteServiceImpl implements UtenteService {
 
 	public Utente findByUsername(String username) {
 		return repository.findByUsername(username).orElse(null);
+	}
+
+	@Override
+	@Transactional
+	public void compraCredito(Integer creditoAggiunto, Utente utenteLoggato) {
+
+		if (utenteLoggato == null)
+			throw new UtenteNotFoundException("Elemento non trovato.");
+		
+		Integer nuovoCredito = utenteLoggato.getCreditoAccumulato() + creditoAggiunto;
+		utenteLoggato.setCreditoAccumulato(nuovoCredito);
 	}
 
 }
