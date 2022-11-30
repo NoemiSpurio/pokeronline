@@ -30,7 +30,6 @@ public class TavoloDTO {
 	private Date dataCreazione;
 
 	@JsonIgnoreProperties(value = { "tavoliCreati", "tavoloJoined" })
-	@NotNull(message = "utenteCreazione.notnull")
 	private UtenteDTO utenteCreazione;
 
 	@JsonIgnoreProperties(value = { "tavoliCreati", "tavoloJoined" })
@@ -109,7 +108,7 @@ public class TavoloDTO {
 
 	public Tavolo buildFromModel() {
 		Tavolo result = new Tavolo(this.id, this.esperienzaMinima, this.cifraMinima, this.denominazione,
-				this.dataCreazione, this.utenteCreazione.buildUtenteModel(false));
+				this.dataCreazione);
 		if (giocatori.size() != 0) {
 			for (UtenteDTO giocatoreItem : giocatori) {
 				result.getGiocatori().add(giocatoreItem.buildUtenteModel(false));
