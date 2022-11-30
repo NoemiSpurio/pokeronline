@@ -79,4 +79,10 @@ public class TavoloServiceImpl implements TavoloService {
 		tavoloRepository.deleteById(idToRemove);
 	}
 
+	@Override
+	public List<Tavolo> tavoliConEsperienzaMinimaMinoreDi(Utente utenteLoggato) {
+
+		return tavoloRepository.findByEsperienzaMinimaLessThan(utenteLoggato.getEsperienzaAccumulata());	
+	}
+
 }

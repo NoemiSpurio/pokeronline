@@ -14,4 +14,6 @@ public interface TavoloRepository extends CrudRepository<Tavolo, Long> {
 	
 	@Query("from Tavolo t join fetch t.utenteCreazione left join fetch t.giocatori")
 	List<Tavolo> findAllTavoloEager();
+	
+	List<Tavolo> findByEsperienzaMinimaLessThan(Integer esperienzaAccumulata);
 }

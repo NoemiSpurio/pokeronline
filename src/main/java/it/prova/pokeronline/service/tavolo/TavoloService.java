@@ -3,6 +3,7 @@ package it.prova.pokeronline.service.tavolo;
 import java.util.List;
 
 import it.prova.pokeronline.model.Tavolo;
+import it.prova.pokeronline.model.Utente;
 
 public interface TavoloService {
 
@@ -15,4 +16,6 @@ public interface TavoloService {
 	Tavolo inserisciNuovo(Tavolo tavoloInstance);
 	
 	void rimuovi(Long idToRemove);
+	
+	List<Tavolo> tavoliConEsperienzaMinimaMinoreDi(Utente utenteLoggato);
 }
