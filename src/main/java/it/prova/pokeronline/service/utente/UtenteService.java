@@ -34,4 +34,6 @@ public interface UtenteService {
 	public Tavolo dammiUltimoGame(Utente utenteLoggato);
 	
 	public void abbandonaPartita(Utente utenteLoggato);
+	
+	public void giocaPartita(Tavolo tavoloDaJoinare, Utente utenteLoggato);
 }

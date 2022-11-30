@@ -36,7 +36,8 @@ public class Tavolo {
 	@Column(name = "dataCreazione")
 	private Date dataCreazione;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tavoloJoined")
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tavolo_id")
 	private Set<Utente> giocatori = new HashSet<Utente>(0);
 
 	@ManyToOne(fetch = FetchType.LAZY)

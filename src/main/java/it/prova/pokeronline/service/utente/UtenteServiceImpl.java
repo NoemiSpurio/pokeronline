@@ -12,7 +12,6 @@ import it.prova.pokeronline.model.StatoUtente;
 import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
-import it.prova.pokeronline.web.api.exception.TavoloNotFoundException;
 import it.prova.pokeronline.web.api.exception.UtenteNotFoundException;
 
 @Service
@@ -111,24 +110,39 @@ public class UtenteServiceImpl implements UtenteService {
 	@Override
 	public Tavolo dammiUltimoGame(Utente utenteLoggato) {
 
-		if (utenteLoggato.getTavoloJoined() == null) {
-			throw new TavoloNotFoundException("Non stai giocando in nessun tavolo");
-		}
-
-		return utenteLoggato.getTavoloJoined();
+//		if (utenteLoggato.getTavoloJoined() == null) {
+//			throw new TavoloNotFoundException("Non stai giocando in nessun tavolo");
+//		}
+//
+//		return utenteLoggato.getTavoloJoined();
+		return null;
 	}
 
 	@Override
 	@Transactional
 	public void abbandonaPartita(Utente utenteLoggato) {
 
-		if (utenteLoggato.getTavoloJoined() == null) {
-			throw new TavoloNotFoundException(
-					"Non puoi abbandonare una partita perche' non stai giocando in nessun tavolo");
-		}
+//		if (utenteLoggato.getTavoloJoined() == null) {
+//			throw new TavoloNotFoundException(
+//					"Non puoi abbandonare una partita perche' non stai giocando in nessun tavolo");
+//		}
+//
+//		utenteLoggato.setTavoloJoined(null);
+//		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
+	}
 
-		utenteLoggato.setTavoloJoined(null);
-		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
+	@Override
+	@Transactional
+	public void giocaPartita(Tavolo tavoloDaJoinare, Utente utenteLoggato) {
+
+//		if (utenteLoggato.getTavoloJoined() != null) {
+//			throw new UtenteGiaInGiocoException(
+//					"Non puoi giocare una partita perche' sei ancora unito ad un altro tavolo.");
+//		}
+//		
+//		utenteLoggato.setTavoloJoined(tavoloDaJoinare);
+// TODO	
+		
 	}
 
 }
