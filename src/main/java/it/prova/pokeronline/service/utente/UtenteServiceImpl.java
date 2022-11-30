@@ -13,6 +13,7 @@ import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.repository.tavolo.TavoloRepository;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
+import it.prova.pokeronline.web.api.exception.CreditoTerminatoException;
 import it.prova.pokeronline.web.api.exception.TavoloNotFoundException;
 import it.prova.pokeronline.web.api.exception.UtenteNonInGiocoException;
 import it.prova.pokeronline.web.api.exception.UtenteNotFoundException;
@@ -26,7 +27,7 @@ public class UtenteServiceImpl implements UtenteService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private TavoloRepository tavoloRepository;
 
@@ -118,13 +119,13 @@ public class UtenteServiceImpl implements UtenteService {
 
 		if (utenteLoggato == null)
 			throw new UtenteNotFoundException("Elemento non trovato.");
-		
+
 		Tavolo result = tavoloRepository.findByGiocatoriId(utenteLoggato.getId());
-		
+
 		if (result == null) {
 			throw new UtenteNonInGiocoException("Utente non in gioco");
 		}
-		
+
 		return result;
 	}
 
@@ -134,9 +135,9 @@ public class UtenteServiceImpl implements UtenteService {
 
 		if (utenteLoggato == null)
 			throw new UtenteNotFoundException("Elemento non trovato.");
-		
+
 		Tavolo result = tavoloRepository.findByGiocatoriId(utenteLoggato.getId());
-		
+
 		if (result == null) {
 			throw new TavoloNotFoundException(
 					"Non puoi abbandonare una partita perche' non stai giocando in nessun tavolo");
@@ -150,8 +151,35 @@ public class UtenteServiceImpl implements UtenteService {
 	@Transactional
 	public void giocaPartita(Tavolo tavoloDaJoinare, Utente utenteLoggato) {
 
-		//TODO
-		
+		if (utenteLoggato == null)
+			throw new UtenteNotFoundException("Elemento non trovato.");
+		if (tavoloDaJoinare == null)
+			throw new TavoloNotFoundException("Tavolo non trovato");
+
+		tavoloDaJoinare.getGiocatori().add(utenteLoggato);
+
+		double randomizer = Math.random();
+		int segno = 0;
+		if (randomizer >= 0.5) {
+			segno = 1;
+		} else {
+			segno = -1;
+		}
+
+		Integer somma = (int) (Math.random() * 1000);
+		Integer totDaAggiungereOSottrarre = segno * somma;
+
+		utenteLoggato.setCreditoAccumulato(utenteLoggato.getCreditoAccumulato() + totDaAggiungereOSottrarre);
+
+		if (utenteLoggato.getCreditoAccumulato() < 0) {
+			utenteLoggato.setCreditoAccumulato(0);
+			utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
+			tavoloDaJoinare.getGiocatori().remove(utenteLoggato);
+			throw new CreditoTerminatoException("Sei stato espulso dal tavolo perche' hai terminato il credito");
+		}
+
+		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
+		tavoloDaJoinare.getGiocatori().remove(utenteLoggato);
 	}
 
 }

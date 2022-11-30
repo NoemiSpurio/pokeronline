@@ -17,6 +17,8 @@ import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.service.tavolo.TavoloService;
 import it.prova.pokeronline.service.utente.UtenteService;
 import it.prova.pokeronline.web.api.exception.CreditoNonValidoException;
+import it.prova.pokeronline.web.api.exception.CreditoTroppoBassoException;
+import it.prova.pokeronline.web.api.exception.EsperienzaNonSufficienteException;
 import it.prova.pokeronline.web.api.exception.UtenteNotFoundException;
 
 @RestController
@@ -88,4 +90,31 @@ public class GameController {
 		return TavoloDTO.createTavoloDTOListFromModelList(
 				tavoloService.tavoliConEsperienzaMinimaMinoreDi(utenteLoggato), false);
 	}
+
+	@GetMapping("/gioca/{idTavolo}")
+	@ResponseStatus(HttpStatus.OK)
+	public void giocaPartita(@PathVariable(required = true) Long idTavolo) {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Utente utenteLoggato = utenteService.findByUsername(username);
+
+		if (utenteLoggato == null) {
+			throw new UtenteNotFoundException("Utente non trovato");
+		}
+
+		Tavolo tavoloDaJoinare = tavoloService.caricaSingoloTavolo(idTavolo, true);
+
+		if (tavoloDaJoinare.getCifraMinima() > utenteLoggato.getCreditoAccumulato()) {
+			throw new CreditoTroppoBassoException(
+					"Non puoi unirti a questo tavolo perche' il tuo credito non e' sufficiente");
+		}
+
+		if (tavoloDaJoinare.getEsperienzaMinima() > utenteLoggato.getEsperienzaAccumulata()) {
+			throw new EsperienzaNonSufficienteException(
+					"Non puoi unirti a questo tavolo perche' non hai abbastanza esperienza");
+		}
+		
+		utenteService.giocaPartita(tavoloDaJoinare, utenteLoggato);
+	}
+
 }
