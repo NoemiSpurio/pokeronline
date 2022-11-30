@@ -11,7 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import it.prova.pokeronline.model.StatoUtente;
 import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
+import it.prova.pokeronline.repository.tavolo.TavoloRepository;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
+import it.prova.pokeronline.web.api.exception.TavoloNotFoundException;
+import it.prova.pokeronline.web.api.exception.UtenteNonInGiocoException;
 import it.prova.pokeronline.web.api.exception.UtenteNotFoundException;
 
 @Service
@@ -23,6 +26,9 @@ public class UtenteServiceImpl implements UtenteService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private TavoloRepository tavoloRepository;
 
 	public List<Utente> listAllUtenti() {
 		return (List<Utente>) repository.findAll();
@@ -110,38 +116,41 @@ public class UtenteServiceImpl implements UtenteService {
 	@Override
 	public Tavolo dammiUltimoGame(Utente utenteLoggato) {
 
-//		if (utenteLoggato.getTavoloJoined() == null) {
-//			throw new TavoloNotFoundException("Non stai giocando in nessun tavolo");
-//		}
-//
-//		return utenteLoggato.getTavoloJoined();
-		return null;
+		if (utenteLoggato == null)
+			throw new UtenteNotFoundException("Elemento non trovato.");
+		
+		Tavolo result = tavoloRepository.findByGiocatoriId(utenteLoggato.getId());
+		
+		if (result == null) {
+			throw new UtenteNonInGiocoException("Utente non in gioco");
+		}
+		
+		return result;
 	}
 
 	@Override
 	@Transactional
 	public void abbandonaPartita(Utente utenteLoggato) {
 
-//		if (utenteLoggato.getTavoloJoined() == null) {
-//			throw new TavoloNotFoundException(
-//					"Non puoi abbandonare una partita perche' non stai giocando in nessun tavolo");
-//		}
-//
-//		utenteLoggato.setTavoloJoined(null);
-//		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
+		if (utenteLoggato == null)
+			throw new UtenteNotFoundException("Elemento non trovato.");
+		
+		Tavolo result = tavoloRepository.findByGiocatoriId(utenteLoggato.getId());
+		
+		if (result == null) {
+			throw new TavoloNotFoundException(
+					"Non puoi abbandonare una partita perche' non stai giocando in nessun tavolo");
+		}
+
+		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
+		result.getGiocatori().remove(utenteLoggato);
 	}
 
 	@Override
 	@Transactional
 	public void giocaPartita(Tavolo tavoloDaJoinare, Utente utenteLoggato) {
 
-//		if (utenteLoggato.getTavoloJoined() != null) {
-//			throw new UtenteGiaInGiocoException(
-//					"Non puoi giocare una partita perche' sei ancora unito ad un altro tavolo.");
-//		}
-//		
-//		utenteLoggato.setTavoloJoined(tavoloDaJoinare);
-// TODO	
+		//TODO
 		
 	}
 
